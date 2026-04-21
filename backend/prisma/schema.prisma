@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Champion {
+  id        Int           @id @default(autoincrement())
+  name      String
+  traits    String
+  price      Int?
+  avatar    String?
+  compLinks CompChampion[]
+}
+
+model Comp {
+  id        Int           @id @default(autoincrement())
+  title     String
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  champions CompChampion[]
+}
+
+model CompChampion {
+  id          Int      @id @default(autoincrement())
+  compId      Int
+  championId  Int
+  isMainCarry Boolean  @default(false)
+  itemNotes   String?
+
+  comp        Comp     @relation(fields: [compId], references: [id], onDelete: Cascade)
+  champion    Champion @relation(fields: [championId], references: [id])
+
+  @@unique([compId, championId])
+}
